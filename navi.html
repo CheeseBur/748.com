@@ -66,7 +66,7 @@
     //添加水印
     var mapContainer = document.getElementById("map").children[0];
     var logo=document.createElement("img");
-    logo.src = "http://ofrfw378v.bkt.clouddn.com/description.png";
+    logo.src = "https://ofrfw378v.bkt.clouddn.com/description.png";
     logo.width =100;
     logo.height =75;
     logo.style.position ='absolute';
@@ -76,13 +76,13 @@
 
 
     //创建底图
-    var baseLayer = new WITS.layer.BaseLayer("http://ofrfw378v.bkt.clouddn.com/v2/SH_GongBoHui-GBH.xml");
+    var baseLayer = new WITS.layer.BaseLayer("https://ofrfw378v.bkt.clouddn.com/v2/SH_GongBoHui-GBH.xml");
     //添加图层
    // wmap.addLayer(baseLayer);
 
    
     //创建标注图层
-    var labelLayer = new WITS.layer.LabelLayer("http://ofrfw378v.bkt.clouddn.com/v2/gongbohui.json",wmap);
+    var labelLayer = new WITS.layer.LabelLayer("https://ofrfw378v.bkt.clouddn.com/v2/gongbohui.json",wmap);
    // wmap.addLayer(labelLayer);
 
    
@@ -128,7 +128,7 @@
                         line:line,     //设置规划的路径
                         lineColor:'rgba(255,1,9,1)',  //设置线的颜色 
                         lineWidth:3,       //设置线的宽度    默认3
-                        arrUrl:"http://ofrfw378v.bkt.clouddn.com/v2/arrow4.png",   //设置箭头   默认绿色
+                        arrUrl:"https://ofrfw378v.bkt.clouddn.com/v2/arrow4.png",   //设置箭头   默认绿色
                         anchor:[0.75, 0.5]   //默认[0.75, 0.5]
                     });
                    wmap.addRoute(route);
@@ -146,7 +146,7 @@
             {
                 coordinate:new WITS.location.coordinate(startPoint[0],startPoint[1]),
                 anchor:[0.31, 0.65], //配置箭头中心   图片左上角为原点  取中心点
-                url:"http://ofrfw378v.bkt.clouddn.com/v2/navi_map_gps4.png",
+                url:"https://ofrfw378v.bkt.clouddn.com/v2/navi_map_gps4.png",
                 rotateWithView:true   //方向随地图旋转
             }
     );
