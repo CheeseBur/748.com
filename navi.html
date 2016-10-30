@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>第18届工博会高校展区导航</title>
+</head>
+
+<style>
+
+
+</style>
+
+
+<link href="http://ofrfw378v.bkt.clouddn.com/wmap.css" rel="stylesheet" type="text/css">
+<!--<script src="../bower_components/v3.17.0-dist/ol.js"></script>-->
+<script src="http://ofrfw378v.bkt.clouddn.com/v2/wmap.min.js"></script>
+<!--<script src="../build/wmap2d.min.js"></script>-->
+<script src="./jquery-2.1.4/jquery.min.js"></script>
+<body>
+
+
+<span id="salpha"></span><!--显示方向角-->
+<span id="demonx"></span><!-- 显示x坐标 -->
+<span id="demony"></span><!-- 显示y坐标 -->
+<span id="time"></span> <!-- 显示步数 -->
+
+
+<div id="map" class="map">
+
+    <!--<canvas id="cc" width="300" height="300"></canvas>-->
+
+</div>
+
+<script>
+
+	/********************相关参数设置********************/
+
+	
+	var originx=20;//坐标初始化
+	var originy=15;
+	
+	
+
+
+	
+	/********************地图显示部分********************/
+    //配置地图属性
+    var options = {
+        target:"map",  //dom id
+        bounds:[0.0,-7.081155E-10,139.00000003352554,48.000000010388845], //地图界限
+        maxZoom: 22,
+        minZoom: 18.5,
+        //width:"100%",   // 默认100%
+        //height:"100%",  //默认屏幕高度
+        extent: [-10, -20, 180, 80],  //拖动范围
+        pinchRotate:true
+    }
+    //初始化 地图
+    var wmap = new  WITS.WMap(options);
+
+	
+    //添加水印
+    var mapContainer = document.getElementById("map").children[0];
+    var logo=document.createElement("img");
+    logo.src = "http://ofrfw378v.bkt.clouddn.com/description.png";
+    logo.width =100;
+    logo.height =75;
+    logo.style.position ='absolute';
+    logo.style.bottom = '1em';
+    logo.style.left = '1em';
+    mapContainer.appendChild(logo);
+
+
+    //创建底图
+    var baseLayer = new WITS.layer.BaseLayer("http://ofrfw378v.bkt.clouddn.com/v2/SH_GongBoHui-GBH.xml");
+    //添加图层
+   // wmap.addLayer(baseLayer);
+
+   
+    //创建标注图层
+    var labelLayer = new WITS.layer.LabelLayer("http://ofrfw378v.bkt.clouddn.com/v2/gongbohui.json",wmap);
+   // wmap.addLayer(labelLayer);
+
+   
+    //添加多个图层
+    wmap.addLayers([baseLayer,labelLayer]);
+
+	
+    //移除单个图层
+    //wmap.removeLayer(labelLayer);
+    //移除所有图层
+    //wmap.removeAllLayer();
+    var route = null;
+    //获取点击feature的属性
+    var startPoint = [originx,originy];
+    wmap.setClickListener(function(data){
+        //{name: "shop", center: [x,y]}
+        var param = {"routePath":"route",
+            "x1":startPoint[0],"y1":startPoint[1],
+            "x2":data.center[0],"y2":data.center[1]
+        };
+	
+		
+		$.ajax({
+           type: "post",
+           async: false,
+           url: "https://cheesebur.github.io/navi/testpath.php",
+
+           dataType: "json",
+           data: param,
+         //自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+           success: function(json){
+
+               if(json.line!=""&&json.line.indexOf("LINESTRING")==0){
+
+                   // var line = "LINESTRING(10 10,20 20,30 40,50 40)";
+                   //LINESTRING(10 9.94475024938583,11.9110355898738 9.94475024938583,13.9693326763809 9.94475024938583,16.027629762888 9.94475024938583,18.085926849395 9.94475024938583,20.6735570263118 9.94475024938583,22 9.94475024938583)
+                   var line = new WITS.routing.HandlerRouteLine(startPoint,json.line).getHandleResult();
+
+                   if(route!==null){
+                       wmap.removeRoute(route);
+                   }
+                   route = new WITS.routing.Route({
+                        line:line,     //设置规划的路径
+                        lineColor:'rgba(255,1,9,1)',  //设置线的颜色 
+                        lineWidth:3,       //设置线的宽度    默认3
+                        arrUrl:"http://ofrfw378v.bkt.clouddn.com/v2/arrow4.png",   //设置箭头   默认绿色
+                        anchor:[0.75, 0.5]   //默认[0.75, 0.5]
+                    });
+                   wmap.addRoute(route);
+               }
+           },
+           error: function(){
+               alert('fail');
+           }
+       });
+    })
+
+	
+    //创建导航箭头
+    var arrow =  new WITS.marker.Arrow(
+            {
+                coordinate:new WITS.location.coordinate(startPoint[0],startPoint[1]),
+                anchor:[0.31, 0.65], //配置箭头中心   图片左上角为原点  取中心点
+                url:"http://ofrfw378v.bkt.clouddn.com/v2/navi_map_gps4.png",
+                rotateWithView:true   //方向随地图旋转
+            }
+    );
+    //向地图中添加箭头
+    wmap.setArrow(arrow);
+    //arrow
+	arrow.setPoint(new WITS.location.coordinate(originx,originy));
+	
+	
+
+</script>
+
+</body>
+</html>
